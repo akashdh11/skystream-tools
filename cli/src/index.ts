@@ -239,7 +239,7 @@ jobs:
       - name: Build Repository
         run: |
           npm install -g skystream-cli
-          skystream build -u https://raw.githubusercontent.com/\${{ github.repository }}
+          skystream build -u https://raw.githubusercontent.com/\${{ github.repository }}/main
 
       - name: Commit and Push changes
         run: |
@@ -279,7 +279,7 @@ program.command('init')
       description: options.description,
       manifestVersion: 1,
       pluginLists: [
-          `REPLACE_WITH_BASE_URL/plugins.json`  // Placeholder for user to update
+          `https://raw.githubusercontent.com/USER_NAME/REPO_NAME/main/dist/plugins.json`
       ]
     };
     await fs.writeJson(path.join(rootDir, 'repo.json'), repo, { spaces: 2 });
