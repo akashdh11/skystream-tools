@@ -1,6 +1,6 @@
 {
   "name": "skystream-cli",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "type": "module",
   "description": "SkyStream Plugin Development Kit & Repository Manager",
   "main": "dist/index.js",

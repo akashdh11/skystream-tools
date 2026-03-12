@@ -12,7 +12,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.2.6');
+  .version('1.2.7');
 
 // Schemas
 const pluginSchema = z.object({
@@ -409,24 +409,53 @@ program.command('test')
     console.log(`\n--- Testing ${manifest.packageName} -> ${options.function} ---`);
     const context: any = {
       manifest,
-      console: { log: (...args: any[]) => console.log('  [JS]:', ...args), error: (...args: any[]) => console.error('  [JS ERR]:', ...args) },
+      console: { 
+        log: (...args: any[]) => console.log('  [JS]:', ...args), 
+        error: (...args: any[]) => console.error('  [JS ERR]:', ...args) 
+      },
       http_get: async (url: string, headers: any, cb: any) => {
         try {
-          const res = await axios.get(url, { headers });
-          const result = { status: res.status, body: res.data, headers: res.headers };
+          const res = await axios.get(url, { headers: headers || {} });
+          const result = { statusCode: res.status, body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), headers: res.headers };
           if (cb) cb(result); return result;
         } catch (e: any) {
-          const res = { status: 500, body: e.message, headers: {} };
+          const res = { statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
           if (cb) cb(res); return res;
         }
+      },
+      http_post: async (url: string, headers: any, body: any, cb: any) => {
+        try {
+          const res = await axios.post(url, body, { headers: headers || {} });
+          const result = { statusCode: res.status, body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), headers: res.headers };
+          if (cb) cb(result); return result;
+        } catch (e: any) {
+          const res = { statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
+          if (cb) cb(res); return res;
+        }
+      },
+      _fetch: async (url: string) => {
+        try {
+          const res = await axios.get(url);
+          return typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+        } catch (e: any) {
+          throw new Error(`HTTP Error ${e.response?.status || 500} fetching ${url}`);
+        }
+      },
+      fetch: async (url: string) => {
+        const res = await axios.get(url);
+        return { 
+          statusCode: res.status, 
+          body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), 
+          headers: res.headers 
+        };
       },
       btoa: (s: string) => Buffer.from(s).toString('base64'),
       atob: (s: string) => Buffer.from(s, 'base64').toString('utf8'),
       globalThis: {} as any,
     };
 
-    const runtime = new Function('manifest', 'console', 'http_get', 'btoa', 'atob', 'globalThis', jsContent);
-    runtime(context.manifest, context.console, context.http_get, context.btoa, context.atob, context.globalThis);
+    const runtime = new Function('manifest', 'console', 'http_get', 'http_post', '_fetch', 'fetch', 'btoa', 'atob', 'globalThis', jsContent);
+    runtime(context.manifest, context.console, context.http_get, context.http_post, context._fetch, context.fetch, context.btoa, context.atob, context.globalThis);
 
     const fn = context.globalThis[options.function];
     if (typeof fn !== 'function') { console.error('Error: exported function not found'); process.exit(1); }
