@@ -68,13 +68,6 @@ declare global {
   /** The pre-injected manifest for the current plugin */
   const manifest: Manifest;
 
-  /** Standard logging polyfill */
-  const console: {
-    log(...args: any[]): void;
-    error(...args: any[]): void;
-    warn(...args: any[]): void;
-  };
-
   /** Helper Class: MultimediaItem */
   class MultimediaItem implements IMultimediaItem {
     constructor(data: IMultimediaItem);
