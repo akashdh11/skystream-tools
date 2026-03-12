@@ -17,15 +17,15 @@ npm install -g skystream-cli
 A repository is a monorepo that contains multiple plugins.
 
 ```bash
-# Initialize a new repository
 skystream init "My-Repo" --package-name com.package.name --plugin-name "plugin-name" --author "USER_NAME"
 ```
 **This command creates**:
 * `repo.json`: Repository metadata and federation links.
 * `README.md`: User-facing instructions with auto-generated links.
+* `.github/workflows/build.yml`: Automated CI/CD pipeline.
 * `plugin-name/`: The folder for your first plugin containing `plugin.js` and `plugin.json`.
 
-## 4. Writing Plugin Logic
+## 4. Plugin Development
 Each plugin consists of a `plugin.json` (metadata) and a `plugin.js` (logic).
 
 ### A. The Manifest (`plugin.json`)
@@ -88,7 +88,7 @@ All functions must return a standard object:
 - `data` (any): The result content (if successful).
 - `message` (string): Error description (if failed).
 
-## 5. Development & Testing
+## 5. Testing
 You can add more plugins and test them locally using a mock SkyStream environment.
 
 ```bash
