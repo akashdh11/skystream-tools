@@ -20,10 +20,12 @@ A repository is a monorepo that contains multiple plugins.
 skystream init "My-Repo" --package-name com.package.name --plugin-name "plugin-name" --author "USER_NAME"
 ```
 **This command creates**:
-* `repo.json`: Repository metadata and federation links.
-* `README.md`: User-facing instructions with auto-generated links.
-* `.github/workflows/build.yml`: Automated CI/CD pipeline.
-* `plugin-name/`: The folder for your first plugin containing `plugin.js` and `plugin.json`.
+*   `repo.json`: The **primary entry point** for your repository. It contains metadata and links to all plugins.
+*   `README.md`: User-facing installation guide with your repository's live URL.
+*   `.github/workflows/build.yml`: The automated **CI/CD pipeline** that builds and deploys your repo on every push.
+*   `plugin-name/`: Your first plugin's source folder.
+    *   `plugin.js`: The **JavaScript logic** for your scraper (where you write the code).
+    *   `plugin.json`: The **manifest** defining your plugin's ID, version, and capabilities.
 
 ## 4. Plugin Development
 Each plugin consists of a `plugin.json` (metadata) and a `plugin.js` (logic).
