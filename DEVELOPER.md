@@ -43,12 +43,10 @@ Navigate to your plugin folder (e.g., `my-plugin/`) and open `plugin.js`. This i
     // 1. getHome: Returns categories for the dashboard
     async function getHome(cb) {
         // Use dynamic baseUrl
-        const homeUrl = `${pluginManifest.baseUrl}/trending`;
+        const homeUrl = `${manifest.baseUrl}/trending`;
         cb({ success: true, data: { "Trending": [ /* MultimediaItems */ ] } });
     }
 ```
-<!-- slide -->
-<!-- (skipping to classes section for the next edit chunk if needed, but I'll do a single contiguous replacement if possible or use multi) -->
 
     // 2. search: Handles user queries
     async function search(query, cb) {
@@ -168,7 +166,7 @@ If you prefer raw objects, ensure they match these definitions:
 | `quality` | `string` | No | Label (e.g., "4K"). |
 | `subtitles` | `array` | No | `{ url, label, lang }`. |
 | `drmKid` | `string` | No | Widevine Key ID. |
-| `licenseUrl`| `string` | No | DRM License server. |
+| `licenseUrl` | `string` | No | DRM License server. |
 </details>
 
 <details>
