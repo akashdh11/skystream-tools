@@ -36,53 +36,101 @@ const repoSchema = z.object({
 
 const JS_TEMPLATE = `(function() {
     /**
+     * @typedef {Object} Response
+     * @property {boolean} success
+     * @property {any} [data]
+     * @property {string} [errorCode]
+     * @property {string} [message]
+     */
+
+    /**
      * @type {import('@skystream/sdk').Manifest}
      */
     const pluginManifest = manifest;
 
     /**
      * Loads the home screen categories.
-     * Returns: Map<string, MultimediaItem[]>
+     * @param {(res: Response) => void} cb 
      */
-    async function getHome() {
-        return {
-            "Trending": []
-        };
+    async function getHome(cb) {
+        try {
+            // Standard: Return a Map of Category -> List of items
+            cb({ 
+                success: true, 
+                data: { 
+                    "Trending": [
+                        { title: "Example Movie", url: "https://site.com/movie", posterUrl: "https://site.com/poster.jpg", isFolder: false }
+                    ] 
+                } 
+            });
+        } catch (e) {
+            cb({ success: false, errorCode: "PARSE_ERROR", message: (e instanceof Error) ? e.message : String(e) });
+        }
     }
 
     /**
      * Searches for media items.
      * @param {string} query
+     * @param {(res: Response) => void} cb 
      */
-    async function search(query) {
-        return [];
+    async function search(query, cb) {
+        try {
+            // Standard: Return a List of items
+            cb({ 
+                success: true, 
+                data: [
+                    { title: "Result for " + query, url: "https://site.com/search", posterUrl: "https://site.com/poster.jpg", isFolder: false }
+                ] 
+            });
+        } catch (e) {
+            cb({ success: false, errorCode: "SEARCH_ERROR", message: (e instanceof Error) ? e.message : String(e) });
+        }
     }
 
     /**
      * Loads details for a specific media item.
      * @param {string} url
+     * @param {(res: Response) => void} cb 
      */
-    async function load(url) {
-        return {
-            title: "Item Name",
-            url: url,
-            posterUrl: "",
-            description: "No description",
-            type: "movie",
-            isFolder: false,
-            episodes: [{ name: "Full Movie", url: url }]
-        };
+    function load(url, cb) {
+        try {
+            // Standard: Return a single item with full metadata
+            cb({ 
+                success: true, 
+                data: { 
+                    title: "Movie Details", 
+                    url, 
+                    posterUrl: "", 
+                    description: "Plot summary...", 
+                    isFolder: false, 
+                    episodes: [] 
+                } 
+            });
+        } catch (e) {
+            cb({ success: false, errorCode: "LOAD_ERROR", message: (e instanceof Error) ? e.message : String(e) });
+        }
     }
 
     /**
      * Resolves streams for a specific media item or episode.
      * @param {string} url
+     * @param {(res: Response) => void} cb 
      */
-    async function loadStreams(url) {
-        return [];
+    async function loadStreams(url, cb) {
+        try {
+            // Standard: Return a List of stream urls
+            cb({ 
+                success: true, 
+                data: [
+                    { url: "https://cdn.com/play.m3u8", quality: "1080p", headers: { "Referer": url } }
+                ] 
+            });
+        } catch (e) {
+            cb({ success: false, errorCode: "STREAM_ERROR", message: (e instanceof Error) ? e.message : String(e) });
+        }
     }
 
-    // Export to global scope
+    // Export to global scope for namespaced IIFE capture
     globalThis.getHome = getHome;
     globalThis.search = search;
     globalThis.load = load;
@@ -349,23 +397,8 @@ program.command('test')
       console.log(JSON.stringify(res, null, 2));
     };
 
-    try {
-        let res;
-        if (options.function === 'getHome') {
-            res = await fn(callback);
-        } else {
-            res = await fn(options.query || '.', callback);
-        }
-
-        // If the function returned a value (other than undefined), log it too
-        if (res !== undefined) {
-            console.log('\n--- Returned Value ---');
-            console.log(JSON.stringify(res, null, 2));
-        }
-    } catch (e) {
-        console.error('\n--- Runtime Error ---');
-        console.error(e);
-    }
+    if (options.function === 'getHome') await fn(callback);
+    else await fn(options.query, callback);
   });
 
 program.command('build')

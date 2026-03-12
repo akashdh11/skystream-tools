@@ -50,36 +50,29 @@ SkyStream plugins run in a sandboxed environment. You must wrap your code in an 
 ```javascript
 (function() {
     // 1. getHome: Returns content for the dashboard
-    async function getHome() {
-        return {
-            success: true,
-            data: [
-                { title: "Trending Movies", items: [{ name: "The Matrix", url: "https://example.com/matrix" }] }
-            ]
-        };
+    async function getHome(cb) {
+        cb({ success: true, data: {} });
     }
 
     // 2. search: Handles user queries
-    async function search(query) {
-        return {
-            success: true,
-            data: [{ name: `Result for ${query}`, url: "..." }]
-        };
+    async function search(query, cb) {
+        cb({ success: true, data: [] });
     }
 
-    // 3. loadStreams: Provides video links for a content item
-    async function loadStreams(contentUrl) {
-        return {
-            success: true,
-            data: [
-                { quality: "1080p", url: "https://cdn.com/video.mp4" }
-            ]
-        };
+    // 3. load: Fetches details for a specific item
+    function load(url, cb) {
+        cb({ success: true, data: { ... } });
+    }
+
+    // 4. loadStreams: Provides video links for a content item
+    async function loadStreams(url, cb) {
+        cb({ success: true, data: [] });
     }
 
     // Export functions to the app
     globalThis.getHome = getHome;
     globalThis.search = search;
+    globalThis.load = load;
     globalThis.loadStreams = loadStreams;
 })();
 ```
@@ -135,6 +128,67 @@ The CLI automatically scaffolds a GitHub Action in `.github/workflows/build.yml`
 - Installs the SkyStream CLI.
 - Automatically builds your repository and updates the `dist/` folder and `README.md`.
 - Commits and pushes the updated distribution files back to your repo.
+
+## 9. Standard Data Schemas
+To ensure your plugin works correctly with the SkyStream UI, you must use these standardized objects inside your `data` responses.
+
+### A. MultimediaItem
+Used by `getHome`, `search`, and `load`.
+
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `title` | `string` | Yes | Display name of the item. |
+| `url` | `string` | Yes | Unique URL identifying the item (Scraper URL). |
+| `posterUrl` | `string` | Yes | URL for the poster image. |
+| `bannerUrl` | `string` | No | URL for a large background image. |
+| `description` | `string` | No | Short plot summary. |
+| `isFolder` | `boolean` | No | `true` if this is a series/folder containing episodes. |
+| `episodes` | `array` | No | List of `Episode` objects (required if `isFolder: true`). |
+| `headers` | `object` | No | Custom HTTP headers needed for images/metadata. |
+
+**Example**:
+```json
+{
+  "title": "The Matrix",
+  "url": "https://yts.mx/movies/the-matrix-1999",
+  "posterUrl": "https://img.yts.mx/poster.jpg",
+  "isFolder": false
+}
+```
+
+### B. Episode
+Used inside the `episodes` array of a `MultimediaItem`.
+
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `name` | `string` | Yes | Title of the episode (e.g., "S01E01"). |
+| `url` | `string` | Yes | Unique URL for this specific episode. |
+| `season` | `number` | No | Season number (default: 0). |
+| `episode` | `number` | No | Episode number (default: 0). |
+| `description` | `string` | No | Plot summary for the episode. |
+| `posterUrl` | `string` | No | Thumbnail URL for this specific episode. |
+
+### C. StreamResult
+Used by `loadStreams`.
+
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `url` | `string` | Yes | Direct video link (mp4, m3u8) or Magnet URI. |
+| `quality` | `string` | No | Resolution label (e.g., "1080p", "4K"). |
+| `headers` | `object` | No | HTTP headers needed to play the video (e.g., `Referer`). |
+| `subtitles` | `array` | No | List of `{ url, label, lang }` objects. |
+| `drmKid` | `string` | No | Key ID for Widevine/DRM content. |
+| `drmKey` | `string` | No | Key for Widevine/DRM content. |
+| `licenseUrl` | `string` | No | License server URL for DRM playback. |
+
+**Example**:
+```json
+{
+  "url": "https://cdn.com/stream.m3u8",
+  "quality": "1080p",
+  "headers": { "User-Agent": "SkyStream/1.0", "Referer": "https://site.com" }
+}
+```
 
 ---
 *Powered by SkyStream Gen 2 Architecture*
