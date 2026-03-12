@@ -12,7 +12,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.2.7');
+  .version('1.2.8');
 
 // Schemas
 const pluginSchema = z.object({
@@ -462,11 +462,29 @@ program.command('test')
 
     const callback = (res: any) => {
       console.log('\n--- Result ---');
+      if (res && res.success === false) {
+        console.log(`\x1b[31mStatus: FAILED\x1b[0m`);
+        console.log(`\x1b[31mError Code: ${res.errorCode || 'UNKNOWN'}\x1b[0m`);
+        if (res.message) console.log(`\x1b[31mMessage: ${res.message}\x1b[0m`);
+      } else {
+        console.log(`\x1b[32mStatus: SUCCESS\x1b[0m`);
+      }
       console.log(JSON.stringify(res, null, 2));
     };
 
-    if (options.function === 'getHome') await fn(callback);
-    else await fn(options.query, callback);
+    try {
+        if (options.function === 'getHome') await fn(callback);
+        else if (!options.query || options.query.trim() === "") {
+            console.warn(`\x1b[33mWarning: Function '${options.function}' usually requires a query/URL (-q), but none was provided.\x1b[0m`);
+            await fn(options.query, callback);
+        } else {
+            await fn(options.query, callback);
+        }
+    } catch (e: any) {
+        console.error(`\n\x1b[31m--- CRITICAL ERROR DURING EXECUTION ---\x1b[0m`);
+        console.error(`\x1b[31m${e.stack || e.message}\x1b[0m\n`);
+        process.exit(2);
+    }
   });
 
 program.command('deploy')

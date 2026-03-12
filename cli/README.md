@@ -82,7 +82,22 @@ skystream test [options]
 **Options:**
 - `-p, --path <path>`: Path to plugin folder (Default: `.`).
 - `-f, --function <name>`: Function to test (Default: `getHome`).
-- `-q, --query <query>`: Query string for functions like `search`.
+- `-q, --query <query>`: Query string (URLs for `load`/`loadStreams`, keywords for `search`).
+
+**Examples:**
+```bash
+# Test dashboard categories
+skystream test -f getHome
+
+# Test search with a keyword
+skystream test -f search -q "avatar"
+
+# Test full details for a movie/series
+skystream test -f load -q "https://site.com/movie/123"
+
+# Test stream links extraction
+skystream test -f loadStreams -q "https://site.com/movie/123"
+```
 
 ---
 
