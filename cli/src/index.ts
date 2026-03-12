@@ -12,7 +12,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.2.5');
+  .version('1.2.6');
 
 // Schemas
 const pluginSchema = z.object({
@@ -109,7 +109,7 @@ const JS_TEMPLATE = `(function() {
      * @param {string} url
      * @param {(res: Response) => void} cb 
      */
-    function load(url, cb) {
+    async function load(url, cb) {
         try {
             // Standard: Return a single item with full metadata
             cb({ 
