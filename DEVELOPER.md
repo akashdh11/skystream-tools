@@ -23,7 +23,7 @@ npm install -g skystream-cli
 ### Step 1: Initialize a Repository
 A repository is a collection of plugins. Use the CLI to scaffold your first one:
 ```bash
-skystream init "My-Repo" --package-name com.yourname.repo --plugin-name "my-plugin" --author "YourName"
+skystream init "my-repo" --package-name com.yourname.repo --plugin-name "my-plugin" --author "YourName"
 ```
 
 ### Step 2: Add More Plugins
