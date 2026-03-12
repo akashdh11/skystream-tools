@@ -18,11 +18,21 @@ If you are a developer looking to create plugins, the best place to start is our
 
 ### Installation
 
-Install the SkyStream CLI globally via NPM to start building your own SkyStream repo:
-
 ```bash
 npm install -g skystream-cli
 ```
+
+### CLI Quick Reference
+
+| Command | Usage | Description |
+| --- | --- | --- |
+| `init` | `skystream init <name> [options]` | Create a new repository project |
+| `add` | `skystream add <name> [options]` | Add a new plugin to the repo |
+| `validate` | `skystream validate` | Check manifests and logic |
+| `test` | `skystream test [options]` | Run a plugin in mock runtime |
+| `deploy` | `skystream deploy --url <url>` | Bundle and generate `repo.json` |
+
+For detailed usage, see the **[CLI Documentation](./cli/README.md)**.
 
 ## 🛠 Features
 
