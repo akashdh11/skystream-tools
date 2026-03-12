@@ -48,8 +48,6 @@ Navigate to your plugin folder (e.g., `my-plugin/`) and open `plugin.js`. This i
 
 ```javascript
 (function() {
-    // Access the pre-injected manifest
-    const pluginManifest = manifest;
 
     // 1. getHome: Returns categories for the dashboard
     async function getHome(cb) {

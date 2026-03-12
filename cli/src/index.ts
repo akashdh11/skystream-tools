@@ -46,7 +46,8 @@ const JS_TEMPLATE = `(function() {
     /**
      * @type {import('@skystream/sdk').Manifest}
      */
-    const pluginManifest = manifest;
+    // var manifest is injected at runtime
+
 
     /**
      * Loads the home screen categories.
