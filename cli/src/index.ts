@@ -55,7 +55,10 @@ const JS_TEMPLATE = `(function() {
      */
     async function getHome(cb) {
         try {
-            // Standard: Return a Map of Category -> List of items
+            // Dashboard Layout:
+            // - "Trending" is a reserved category promoted to the Hero Carousel.
+            // - Other categories appear as horizontal thumbnail rows.
+            // - If "Trending" is missing, the first category is used for the carousel.
             cb({ 
                 success: true, 
                 data: { 
@@ -63,9 +66,9 @@ const JS_TEMPLATE = `(function() {
                         new MultimediaItem({ 
                             title: "Example Movie", 
                             url: \`\${manifest.baseUrl}/movie\`, 
-                            posterUrl: \`\${manifest.baseUrl}/poster.jpg\`, 
+                            posterUrl: \`https://placehold.co/400x600?text=Trending+Poster\`, 
                             type: "movie", // Valid types: movie, series, anime, livestream
-                            bannerUrl: \`\${manifest.baseUrl}/banner.jpg\`, // (optional)
+                            bannerUrl: \`https://placehold.co/1280x720?text=Trending+Banner\`, // (optional)
                             description: "Plot summary here...", // (optional)
                             headers: { "Referer": \`\${manifest.baseUrl}\` } // (optional)
                         })
@@ -73,7 +76,7 @@ const JS_TEMPLATE = `(function() {
                 } 
             });
         } catch (e) {
-            cb({ success: false, errorCode: "PARSE_ERROR", message: (e instanceof Error) ? e.message : String(e) });
+            cb({ success: false, errorCode: "PARSE_ERROR", message: e.stack });
         }
     }
 
