@@ -464,20 +464,20 @@ program.command('test')
       http_get: async (url: string, headers: any, cb: any) => {
         try {
           const res = await axios.get(url, { headers: headers || {} });
-          const result = { statusCode: res.status, body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), headers: res.headers };
+          const result = { status: res.status, statusCode: res.status, body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), headers: res.headers };
           if (cb) cb(result); return result;
         } catch (e: any) {
-          const res = { statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
+          const res = { status: e.response?.status || 500, statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
           if (cb) cb(res); return res;
         }
       },
       http_post: async (url: string, headers: any, body: any, cb: any) => {
         try {
           const res = await axios.post(url, body, { headers: headers || {} });
-          const result = { statusCode: res.status, body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), headers: res.headers };
+          const result = { status: res.status, statusCode: res.status, body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), headers: res.headers };
           if (cb) cb(result); return result;
         } catch (e: any) {
-          const res = { statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
+          const res = { status: e.response?.status || 500, statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
           if (cb) cb(res); return res;
         }
       },
@@ -492,6 +492,7 @@ program.command('test')
       fetch: async (url: string) => {
         const res = await axios.get(url);
         return { 
+          status: res.status,
           statusCode: res.status, 
           body: typeof res.data === 'string' ? res.data : JSON.stringify(res.data), 
           headers: res.headers 
