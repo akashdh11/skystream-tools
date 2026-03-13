@@ -84,14 +84,17 @@ Navigate to your plugin folder (e.g., `my-plugin/`) and open `plugin.js`. This i
 </details>
 
 ### Step 4: Local Testing
-Verify your logic without leaving your terminal:
-```bash
-# Test the dashboard
-skystream test --function getHome
+Verify your scraper logic directly in your terminal before deploying.
 
-# Test search
-skystream test --function search --query "Big Buck Bunny"
-```
+| Function | Command | Purpose |
+| :--- | :--- | :--- |
+| **getHome** | `skystream test -f getHome` | Check if dashboard categories load. |
+| **search** | `skystream test -f search -q "Query"` | Verify search results for a keyword. |
+| **load** | `skystream test -f load -q "URL"` | Verify movie/series details & episodes. |
+| **loadStreams** | `skystream test -f loadStreams -q "URL"` | Check if playable video links are found. |
+
+> [!TIP]
+> If a test fails with `PARSE_ERROR`, the CLI (v1.2.8+) will now attempt to show you the internal JavaScript stack trace to help you pinpoint the exact line that crashed.
 
 ### Step 4: Deployment
 SkyStream uses GitHub Actions to deploy and host your repository automatically.
