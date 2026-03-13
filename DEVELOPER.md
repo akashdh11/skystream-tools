@@ -209,6 +209,19 @@ Inject custom logic into playlists:
 ```javascript
 const m3u8 = "magic_m3u8:" + btoa("#EXTM3U\n...");
 ```
+
+### JS Timer Support (Optional)
+SkyStream provides standard JavaScript timer functions. These are useful for handling rate-limiting, anti-bot delays, or background polling.
+
+| Function | Description |
+| :--- | :--- |
+| `setTimeout(callback, delay)` | Executes `callback` after `delay` milliseconds. Returns a timeout ID. |
+| `clearTimeout(id)` | Cancels a timeout previously established by `setTimeout`. |
+| `setInterval(callback, delay)` | Repeatedly executes `callback` every `delay` milliseconds. Returns an interval ID. |
+| `clearInterval(id)` | Cancels a repeating action previously established by `setInterval`. |
+
+> [!NOTE]
+> These functions are **globally available**. You do not need to include them in your plugin unless you specifically need delayed or repeated execution.
 </details>
 
 ---

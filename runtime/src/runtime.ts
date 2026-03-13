@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
-import * as fs from 'fs-extra';
+import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as vm from 'vm';
 
 export interface RuntimeOptions {
   manifest: any;
@@ -16,7 +17,8 @@ export class SkyStreamRuntime {
   }
 
   private createMockContext() {
-    return {
+    const sandbox = Object.create(null);
+    Object.assign(sandbox, {
       manifest: this.options.manifest,
       console: {
         log: (...args: any[]) => console.log('[Plugin Log]:', ...args),
@@ -49,8 +51,12 @@ export class SkyStreamRuntime {
       },
       btoa: (s: string) => Buffer.from(s).toString('base64'),
       atob: (s: string) => Buffer.from(s, 'base64').toString('utf8'),
+      setTimeout,
+      clearTimeout,
+      setInterval,
+      clearInterval,
       MultimediaItem: class MultimediaItem {
-        constructor(data: any) { Object.assign(this, data); if (!this.type) this.type = 'movie'; }
+        constructor(data: any) { Object.assign(this, data); if (!(this as any).type) (this as any).type = 'movie'; }
       },
       Episode: class Episode {
         constructor(data: any) { Object.assign(this, data); }
@@ -59,32 +65,20 @@ export class SkyStreamRuntime {
         constructor(data: any) { Object.assign(this, data); }
       },
       globalThis: {} as any,
-    };
+    });
+    return vm.createContext(sandbox);
   }
 
-  async run() {
-    const jsContent = await fs.readFile(this.options.pluginPath, 'utf8');
-    
-    // Simple execution in Node vm-like style but using a Function constructor for mock injection
-    const runtimeFunc = new Function(
-      'manifest', 'console', 'http_get', 'http_post', 'btoa', 'atob', 
-      'MultimediaItem', 'Episode', 'StreamResult', 'globalThis', 
-      jsContent
-    );
-    
-    runtimeFunc(
-      this.context.manifest,
-      this.context.console,
-      this.context.http_get,
-      this.context.http_post,
-      this.context.btoa,
-      this.context.atob,
-      this.context.MultimediaItem,
-      this.context.Episode,
-      this.context.StreamResult,
-      this.context.globalThis
-    );
-
+  public async run(jsContent: string) {
+    try {
+      vm.runInContext(jsContent, this.context, {
+        timeout: 5000,
+        breakOnSigint: true,
+      });
+    } catch (e: any) {
+      console.error('[Runtime Error]:', e);
+      throw e;
+    }
     return this.context.globalThis;
   }
 }

@@ -580,25 +580,38 @@ program.command('test')
         }
       }
 
-      globalThis.MultimediaItem = MultimediaItem;
-      globalThis.Episode = Episode;
-      globalThis.StreamResult = StreamResult;
+      globalThis.clearInterval = clearInterval;
     `;
 
-    // Wrap the plugin code and classes in a combined block to ensure scope visibility
+    const sandbox = Object.create(null);
+    sandbox.console = console;
+    sandbox.axios = axios;
+    sandbox.Buffer = Buffer;
+    sandbox.manifest = manifest;
+    sandbox.setTimeout = setTimeout;
+    sandbox.clearTimeout = clearTimeout;
+    sandbox.setInterval = setInterval;
+    sandbox.clearInterval = clearInterval;
+    
+    // Inject the classes from entityDefs into the sandbox
+    const vmContext = vm.createContext(sandbox);
+    vm.runInContext(entityDefs, vmContext);
+
     const combinedScript = `
-      ${entityDefs}
       try {
         ${jsContent}
-      } catch (e) {
+      } catch (e: any) {
         console.error("Critical Runtime Error: " + e.stack);
       }
     `;
 
-    const runtime = new Function('manifest', 'console', 'http_get', 'http_post', '_fetch', 'fetch', 'btoa', 'atob', 'sendMessage', 'globalThis', combinedScript);
-    runtime(context.manifest, context.console, context.http_get, context.http_post, context._fetch, context.fetch, context.btoa, context.atob, context.sendMessage, context.globalThis);
+    try {
+      vm.runInContext(combinedScript, vmContext, { timeout: 5000, breakOnSigint: true });
+    } catch (e: any) {
+      console.error("VM Execution Error: " + e.message);
+    }
 
-    const fn = context.globalThis[options.function];
+    const fn = (vmContext as any).globalThis[options.function];
     if (typeof fn !== 'function') { console.error('Error: exported function not found'); process.exit(1); }
 
     const callback = (res: any) => {
