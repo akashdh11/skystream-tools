@@ -27,26 +27,28 @@ export class SkyStreamRuntime {
       },
       http_get: async (url: string, headers: any, cb: any) => {
         try {
-          const res = await axios.get(url, { headers });
-          const result = { status: res.status, body: res.data, headers: res.headers };
+          const res = await axios.get(url, { headers: headers || {} });
+          const body = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+          const result = { status: res.status, statusCode: res.status, body, headers: res.headers };
           if (cb) cb(result);
           return result;
         } catch (e: any) {
-             const result = { status: e.response?.status || 500, body: e.message, headers: {} };
-             if (cb) cb(result);
-             return result;
+          const res = { status: e.response?.status || 500, statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
+          if (cb) cb(res);
+          return res;
         }
       },
       http_post: async (url: string, headers: any, body: any, cb: any) => {
         try {
-          const res = await axios.post(url, body, { headers });
-          const result = { status: res.status, body: res.data, headers: res.headers };
+          const res = await axios.post(url, body, { headers: headers || {} });
+          const respBody = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+          const result = { status: res.status, statusCode: res.status, body: respBody, headers: res.headers };
           if (cb) cb(result);
           return result;
         } catch (e: any) {
-            const result = { status: e.response?.status || 500, body: e.message, headers: {} };
-            if (cb) cb(result);
-            return result;
+          const res = { status: e.response?.status || 500, statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
+          if (cb) cb(res);
+          return res;
         }
       },
       btoa: (s: string) => Buffer.from(s).toString('base64'),

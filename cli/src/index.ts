@@ -14,7 +14,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.3.8');
+  .version('1.4.0');
 
 // Schemas
 const pluginSchema = z.object({
@@ -594,10 +594,12 @@ program.command('test')
     `;
 
     const sandbox = Object.create(null);
+    Object.assign(sandbox, context);
+    
+    // Ensure Node globals are present
     sandbox.console = console;
     sandbox.axios = axios;
     sandbox.Buffer = Buffer;
-    sandbox.manifest = manifest;
     sandbox.setTimeout = setTimeout;
     sandbox.clearTimeout = clearTimeout;
     sandbox.setInterval = setInterval;
@@ -611,7 +613,7 @@ program.command('test')
     const combinedScript = `
       try {
         ${jsContent}
-      } catch (e: any) {
+      } catch (e) {
         console.error("Critical Runtime Error: " + e.stack);
       }
     `;
