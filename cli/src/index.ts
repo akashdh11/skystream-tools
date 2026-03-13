@@ -12,7 +12,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.3.4');
+  .version('1.3.5');
 
 // Schemas
 const pluginSchema = z.object({
@@ -88,6 +88,13 @@ const JS_TEMPLATE = `(function() {
                                     season: 1,
                                     episode: 1,
                                     posterUrl: \`https://placehold.co/400x600.png?text=EP1+Poster\`
+                                }),
+                                new Episode({
+                                    name: "Episode 2",
+                                    url: \`\${manifest.baseUrl}/series/2\`,
+                                    season: 1,
+                                    episode: 2,
+                                    posterUrl: \`https://placehold.co/400x600.png?text=EP2+Poster\`
                                 })
                             ]
                         })
@@ -161,6 +168,15 @@ const JS_TEMPLATE = `(function() {
                             season: 1, 
                             episode: 1, 
                             description: "Episode summary...", 
+                            posterUrl: \`https://placehold.co/400x600.png?text=Episode+Poster\`,
+                            headers: { "Referer": \`\${manifest.baseUrl}\` } 
+                        }),
+                        new Episode({ 
+                            name: "Episode 2", 
+                            url: \`\${manifest.baseUrl}/watch/2\`, 
+                            season: 1, 
+                            episode: 2, 
+                            description: "Next episode summary...", 
                             posterUrl: \`https://placehold.co/400x600.png?text=Episode+Poster\`,
                             headers: { "Referer": \`\${manifest.baseUrl}\` } 
                         })
