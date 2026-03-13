@@ -8,13 +8,14 @@ import { z } from 'zod';
 import archiver from 'archiver';
 import axios from 'axios';
 import AdmZip from 'adm-zip';
+import { JSDOM } from 'jsdom';
 
 const program = new Command();
 
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.4.1');
+  .version('1.4.2');
 
 // Schemas
 const pluginSchema = z.object({
@@ -604,6 +605,8 @@ program.command('test')
     sandbox.clearTimeout = clearTimeout;
     sandbox.setInterval = setInterval;
     sandbox.clearInterval = clearInterval;
+    sandbox.JSDOM = JSDOM;
+    sandbox.URL = URL;
     sandbox.globalThis = sandbox;
     
     // Inject the classes from entityDefs into the sandbox
