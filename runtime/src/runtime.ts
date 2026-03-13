@@ -64,8 +64,8 @@ export class SkyStreamRuntime {
       StreamResult: class StreamResult {
         constructor(data: any) { Object.assign(this, data); }
       },
-      globalThis: {} as any,
     });
+    sandbox.globalThis = sandbox;
     return vm.createContext(sandbox);
   }
 

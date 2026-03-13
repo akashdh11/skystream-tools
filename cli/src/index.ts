@@ -453,6 +453,16 @@ program.command('test')
     const manifestPath = path.join(pluginDir, 'plugin.json');
     const jsPath = path.join(pluginDir, 'plugin.js');
 
+    if (!await fs.pathExists(manifestPath)) {
+      console.error(`Error: plugin.json not found at ${manifestPath}`);
+      console.log('Hint: Run this command from your plugin directory or specify --path');
+      process.exit(1);
+    }
+    if (!await fs.pathExists(jsPath)) {
+      console.error(`Error: plugin.js not found at ${jsPath}`);
+      process.exit(1);
+    }
+
     const manifest = await fs.readJson(manifestPath);
     const jsContent = await fs.readFile(jsPath, 'utf8');
 
@@ -592,6 +602,7 @@ program.command('test')
     sandbox.clearTimeout = clearTimeout;
     sandbox.setInterval = setInterval;
     sandbox.clearInterval = clearInterval;
+    sandbox.globalThis = sandbox;
     
     // Inject the classes from entityDefs into the sandbox
     const vmContext = vm.createContext(sandbox);
