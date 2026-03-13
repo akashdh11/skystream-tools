@@ -12,7 +12,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.3.0');
+  .version('1.3.1');
 
 // Schemas
 const pluginSchema = z.object({
@@ -64,15 +64,25 @@ const JS_TEMPLATE = `(function() {
                 data: { 
                     "Trending": [
                         new MultimediaItem({ 
-                            title: "Example Movie", 
+                            title: "Example Movie (Carousel)", 
                             url: \`\${manifest.baseUrl}/movie\`, 
-                            posterUrl: \`https://placehold.co/400x600?text=Trending+Poster\`, 
+                            posterUrl: \`https://placehold.co/400x600.png?text=Trending+Poster\`, 
                             type: "movie", // Valid types: movie, series, anime, livestream
-                            bannerUrl: \`https://placehold.co/1280x720?text=Trending+Banner\`, // (optional)
+                            bannerUrl: \`https://placehold.co/1280x720.png?text=Trending+Banner\`, // (optional)
                             description: "Plot summary here...", // (optional)
                             headers: { "Referer": \`\${manifest.baseUrl}\` } // (optional)
                         })
-                    ] 
+                    ],
+                    "Latest Releases": [
+                        new MultimediaItem({ 
+                            title: "Example Movie (Thumb)", 
+                            url: \`\${manifest.baseUrl}/movie2\`, 
+                            posterUrl: \`https://placehold.co/400x600.png?text=Thumbnail+Poster\`, 
+                            type: "movie", // Valid types: movie, series, anime, livestream
+                            description: "This category appears as a thumbnail row.", // (optional)
+                            headers: { "Referer": \`\${manifest.baseUrl}\` } // (optional)
+                        })
+                    ]
                 } 
             });
         } catch (e) {
