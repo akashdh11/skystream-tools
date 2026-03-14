@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.4.6');
+  .version('1.4.7');
 
 // Schemas
 const pluginSchema = z.object({
@@ -492,11 +492,12 @@ program.command('test')
           }
           const res = await axios.get(url, { headers: finalHeaders });
           const body = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
-          if (cb) cb({ status: res.status, statusCode: res.status, body, headers: res.headers });
-          return body;
+          const response = { status: res.status, statusCode: res.status, body, headers: res.headers };
+          if (cb) cb(response);
+          return response;
         } catch (e: any) {
           const res = { status: e.response?.status || 500, statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
-          if (cb) cb(res); return typeof res.body === 'string' ? res.body : JSON.stringify(res.body);
+          if (cb) cb(res); return res;
         }
       },
       http_post: async (url: string, headers: any, body: any, cb: any) => {
@@ -507,11 +508,12 @@ program.command('test')
           }
           const res = await axios.post(url, body, { headers: finalHeaders });
           const resBody = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
-          if (cb) cb({ status: res.status, statusCode: res.status, body: resBody, headers: res.headers });
-          return resBody;
+          const response = { status: res.status, statusCode: res.status, body: resBody, headers: res.headers };
+          if (cb) cb(response);
+          return response;
         } catch (e: any) {
           const res = { status: e.response?.status || 500, statusCode: e.response?.status || 500, body: e.response?.data || e.message, headers: e.response?.headers || {} };
-          if (cb) cb(res); return typeof res.body === 'string' ? res.body : JSON.stringify(res.body);
+          if (cb) cb(res); return res;
         }
       },
       registerSettings: (schema: any) => {
