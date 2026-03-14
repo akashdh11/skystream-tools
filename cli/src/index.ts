@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.4.8');
+  .version('1.4.9');
 
 // Schemas
 const pluginSchema = z.object({
