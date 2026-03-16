@@ -186,6 +186,7 @@ const JS_TEMPLATE = `(function() {
                             description: "Episode summary...", 
                             posterUrl: \`https://placehold.co/400x600.png?text=Episode+Poster\`,
                             headers: { "Referer": \`\${manifest.baseUrl}\` },
+                            dubStatus: "sub",
                             streams: [] // Optional: "Instant Load" for episodes
                         }),
                         new Episode({ 
@@ -195,7 +196,8 @@ const JS_TEMPLATE = `(function() {
                             episode: 2, 
                             description: "Next episode summary...", 
                             posterUrl: \`https://placehold.co/400x600.png?text=Episode+Poster\`,
-                            headers: { "Referer": \`\${manifest.baseUrl}\` } 
+                            headers: { "Referer": \`\${manifest.baseUrl}\` },
+                            dubStatus: "sub"
                         })
                     ]
                 })

@@ -87,6 +87,8 @@ export interface IMultimediaItem {
   playbackPolicy?: string;
   isAdult?: boolean;
   nextAiring?: INextAiring;
+  syncData?: Record<string, string>;
+  streams?: IStreamResult[];
 }
 
 /**
@@ -175,6 +177,8 @@ declare global {
     playbackPolicy?: string;
     isAdult?: boolean;
     nextAiring?: NextAiring;
+    syncData?: Record<string, string>;
+    streams?: StreamResult[];
   }
 
   /** Helper Class: Episode */
@@ -229,10 +233,10 @@ declare global {
   function solveCaptcha(siteKey: string, url: string): Promise<string>;
 
   /** Cryptography Helpers */
-  const crypto: {
+  interface Crypto {
     /** Decrypt AES-CBC data with PKCS7 padding */
     decryptAES(data: string, key: string, iv: string): string;
-  };
+  }
 
   interface HttpResponse {
     status: number;

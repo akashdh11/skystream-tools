@@ -83,8 +83,10 @@ export class SkyStreamRuntime {
           Object.assign(this, {
             type: 'movie',
             status: 'ongoing',
-            vpnStatus: 'none',
+            playbackPolicy: 'none',
             isAdult: false,
+            streams: [],
+            syncData: {},
             ...data
           }); 
         }
@@ -95,6 +97,8 @@ export class SkyStreamRuntime {
             season: 0,
             episode: 0,
             dubStatus: 'none',
+            playbackPolicy: 'none',
+            streams: [],
             ...data
           }); 
         }
