@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name('skystream')
   .description('SkyStream Plugin Development Kit CLI (Sky Gen 2)')
-  .version('1.5.1');
+  .version('1.5.5');
 
 // Schemas
 const pluginSchema = z.object({
@@ -642,6 +642,17 @@ program.command('test')
           Object.assign(this, params);
         }
       }
+
+      globalThis.parseHtml = async function(html) {
+          return new Promise((resolve, reject) => {
+              try {
+                  const dom = new JSDOM(html);
+                  resolve(dom.window.document);
+              } catch (e) {
+                  reject(e);
+              }
+          });
+      };
 
       globalThis.clearInterval = clearInterval;
     `;
