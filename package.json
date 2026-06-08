@@ -6,5 +6,6 @@
     "sdk",
     "runtime",
     "extractors"
-  ]
+  ],
+  "allowScripts": {}
 }

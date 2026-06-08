@@ -12,3 +12,4 @@ export { Voe } from './extractors/voe';
 export { StreamTape } from './extractors/stream_tape';
 export { Filemoon } from './extractors/filemoon';
 export { DoodExtractor } from './extractors/dood_extractor';
+export { PixelDrain, PixelDrainDev } from './extractors/pixel_drain';
